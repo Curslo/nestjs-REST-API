@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { error } from 'console';
 const db = {
   pets: [{
     id: 1,
@@ -25,7 +26,7 @@ const db = {
 };
 
 export interface IPets {
-  id : number,
+  id? : number,
   name : string,
   age : number,
   breed : string,
@@ -54,15 +55,15 @@ export class AppService {
 
   editPet(id: string, data: IPets): {} {
     try {
-      const index = db.pets.findIndex(pet => pet.id === parseInt(id))
-      console.log(index)
-
-      if (index === -1) throw new Error('Pet not found')
-      else {
-       db.pets[index] = data;
-        console.log(data)
-        return data;
-      }
+     //Find the index of a given id
+     const index = db.pets.findIndex(pet => pet.id === parseInt(id));
+     if(index === -1) return new error('Pet not found');
+     //Find the element with the given index
+     const element = db.pets[index];
+     //Update the items in the element with the new data
+      const updatedItem = {...element, ...data};
+      db.pets[index] = updatedItem;
+      return updatedItem;
     } catch (err) {
       console.log('Error', err)
     }
